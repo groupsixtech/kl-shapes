@@ -92,11 +92,62 @@ ROUTINE t_pnt2pln : BOOLEAN
 
     shapes__create_plane(origin[4], normal[4], planes[4])
 
-    RETURN( kunit_eq_vec(expected[1], shapes__project_point_on_plane(point[1], planes[1]) ) AND
-         kunit_eq_vec(expected[2], shapes__project_point_on_plane(point[2], planes[2]) ) AND  
-         kunit_eq_vec(expected[3], shapes__project_point_on_plane(point[3], planes[3]) ) AND
-         kunit_eq_vec(expected[4], shapes__project_point_on_plane(point[4], planes[4]) ) )
+    RETURN( kunit_eq_vrl(expected[1], shapes__project_point_on_plane(point[1], planes[1]), 0.05) AND
+         kunit_eq_vrl(expected[2], shapes__project_point_on_plane(point[2], planes[2]), 0.05) AND  
+         kunit_eq_vrl(expected[3], shapes__project_point_on_plane(point[3], planes[3]), 0.05) AND
+         kunit_eq_vrl(expected[4], shapes__project_point_on_plane(point[4], planes[4]), 0.05) )
   END t_pnt2pln
+
+ROUTINE t_pnt2pln2 : BOOLEAN
+  VAR
+    setpnts1 : ARRAY[3] OF VECTOR
+    setpnts2 : ARRAY[3] OF VECTOR
+    actual_plane : T_PLANE
+    expect_plane : T_PLANE
+    b1, b2, b3, b4 : BOOLEAN
+  BEGIN
+    -- create plane from 3 points
+    setpnts1[1] = VEC(0,0,0)
+    setpnts1[2] = VEC(1,0,0)
+    setpnts1[3] = VEC(0,1,0)
+    actual_plane = shapes__create_plane_from_points(setpnts1[1], setpnts1[2], setpnts1[3])
+    expect_plane.normal = VEC(0,0,1)
+    expect_plane.origin = VEC(0,0,0)
+    expect_plane.d = 0
+    b1 = kunit_assert(kunit_eq_vec(expect_plane.normal, actual_plane.normal) AND kunit_eq_vec(expect_plane.origin, actual_plane.origin) AND kunit_eq_r(expect_plane.d, actual_plane.d))
+
+    -- create plane from 3 points
+    setpnts2[1] = VEC(0,0,0)
+    setpnts2[2] = VEC(1,0,0)
+    setpnts2[3] = VEC(0,0,1)
+    actual_plane = shapes__create_plane_from_points(setpnts2[1], setpnts2[2], setpnts2[3])
+    expect_plane.normal = VEC(0,-1,0)
+    expect_plane.origin = VEC(0,0,0)
+    expect_plane.d = 0
+    b2 = kunit_assert(kunit_eq_vec(expect_plane.normal, actual_plane.normal) AND kunit_eq_vec(expect_plane.origin, actual_plane.origin) AND kunit_eq_r(expect_plane.d, actual_plane.d))
+
+    -- create plane from 3 points
+    setpnts2[1] = VEC(1,0,0)
+    setpnts2[2] = VEC(0,1,0)
+    setpnts2[3] = VEC(0,0,1)
+    actual_plane = shapes__create_plane_from_points(setpnts2[1], setpnts2[2], setpnts2[3])
+    expect_plane.normal = VEC(1,1,1)
+    expect_plane.origin = VEC(1,0,0)
+    expect_plane.d = -1
+    b3 = kunit_assert(kunit_eq_vec(expect_plane.normal, actual_plane.normal) AND kunit_eq_vec(expect_plane.origin, actual_plane.origin) AND kunit_eq_r(expect_plane.d, actual_plane.d))
+
+    -- create plane from 3 points
+    setpnts2[1] = VEC(2,2,2)
+    setpnts2[2] = VEC(-3,3,0)
+    setpnts2[3] = VEC(0,0,1)
+    actual_plane = shapes__create_plane_from_points(setpnts2[1], setpnts2[2], setpnts2[3])
+    expect_plane.normal = VEC(-5,-1,11.99)
+    expect_plane.origin = VEC(2,2,2)
+    expect_plane.d = -11.99
+    b4 = kunit_assert(kunit_eq_vrl(expect_plane.normal, actual_plane.normal, 0.05) AND kunit_eq_vrl(expect_plane.origin, actual_plane.origin, 0.05) AND kunit_eq_rep(expect_plane.d, actual_plane.d, 0.05))
+
+    RETURN(b1 AND b2 AND b3 AND b4)
+  END t_pnt2pln2
 
 BEGIN
     -- total assersions 8

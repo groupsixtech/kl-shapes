@@ -8,7 +8,9 @@ PROGRAM shapes
 %include shapes.klt
 
 %include math.klh
+%include pose.klh
 %include shapes.klh
+%from systemlib.klh %import VEC, VEC2D
 
 BEGIN
 END shapes
@@ -23,6 +25,22 @@ ROUTINE shapes__create_plane
     -- solve for d
     out_plane.d = -1*(out_plane.normal@origin)
   END shapes__create_plane
+
+ROUTINE shapes__create_plane_from_points
+  VAR
+    v1 : VECTOR
+    v2 : VECTOR
+    out_plane : t_PLANE
+  BEGIN
+    v1 = p2 - p1
+    v2 = p3 - p1
+
+    out_plane.normal = v1#v2
+    out_plane.origin = p1
+    out_plane.d = -1*(out_plane.normal@p1)
+
+    RETURN(out_plane)
+  END shapes__create_plane_from_points
 
 ROUTINE shapes__project_point_on_plane
   BEGIN

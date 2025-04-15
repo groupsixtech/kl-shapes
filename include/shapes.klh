@@ -11,6 +11,9 @@
 -- create plane from normal.
 declare_function(prog_name,create_plane,prog_name_alias,cpln)
 ROUTINE shapes__create_plane(origin : VECTOR; normal_vec : VECTOR; out_plane : t_PLANE) FROM shapes
+-- create a plane from 3 points
+declare_function(prog_name,create_plane_from_points,prog_name_alias,cplnfp)
+ROUTINE shapes__create_plane_from_points(p1 : VECTOR; p2 : VECTOR; p3 : VECTOR) : t_PLANE FROM shapes
 declare_function(prog_name,project_point_on_plane,prog_name_alias,prjpln)
 ROUTINE shapes__project_point_on_plane(point : VECTOR; plane : t_PLANE) : VECTOR FROM shapes
 declare_function(prog_name,distance_of_point_to_plane,prog_name_alias,dstpln)
