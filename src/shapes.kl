@@ -42,6 +42,104 @@ ROUTINE shapes__create_plane_from_points
     RETURN(out_plane)
   END shapes__create_plane_from_points
 
+ROUTINE shapes__plane_intersection_line
+  VAR
+    v1 : VECTOR
+    v2 : VECTOR
+    out_line : t_LINE
+  BEGIN
+    v1 = pl1.normal#pl2.normal
+    -- solution at z=0
+    -- pl1.normal*lambda - pl1.d = 0
+    -- pl2.normal*lambda - pl2.d = 0
+    v2.x = ((-1*pl1.d)*pl2.normal.y - (-1*pl2.d)*pl1.normal.y)/(pl1.normal.x*pl2.normal.y - pl2.normal.x*pl1.normal.y)
+    v2.y = ((-1*pl2.d)*pl1.normal.x - (-1*pl1.d)*pl2.normal.x)/(pl1.normal.x*pl2.normal.y - pl2.normal.x*pl1.normal.y)
+    v2.z = 0
+
+    out_line.point = v2
+    out_line.vec = v1/math__norm(v1)
+
+    RETURN(out_line)
+  END shapes__plane_intersection_line
+
+ROUTINE shapes__vector_from_2planes
+  VAR
+    pl1, pl2 : t_PLANE
+    ln1 : t_LINE
+  BEGIN
+    pl1 = shapes__create_plane_from_points(p1, p2, p3)
+    pl2 = shapes__create_plane_from_points(p4, p5, p6)
+    ln1 = shapes__plane_intersection_line(pl1, pl2)
+
+    RETURN(ln1.vec)
+  END shapes__vector_from_2planes
+
+ROUTINE shapes__euler_from_2planes
+  VAR
+    pl1, pl2 : t_PLANE
+    ln1 : t_LINE
+  BEGIN
+    pl1 = shapes__create_plane_from_points(p1, p2, p3)
+    pl2 = shapes__create_plane_from_points(p4, p5, p6)
+    ln1 = shapes__plane_intersection_line(pl1, pl2)
+
+    RETURN( pose__vector_to_euler(ln1.vec, 1) )
+  END shapes__euler_from_2planes
+
+ROUTINE shapes__plane_intersection_bicsector
+  VAR
+    int_lne : t_LINE
+    v_pl1 : VECTOR
+    v_Pl2 : VECTOR
+    bisec : VECTOR
+  BEGIN
+    -- find intersection vector of two planes
+    -- normal will be a unit vector
+    int_lne = shapes__plane_intersection_line(pl1, pl2)
+
+    --get vector on each plane perpendicular to intersection line
+    v_pl1 = pl1.normal#int_lne.vec
+    v_pl2 = pl2.normal#int_lne.vec
+
+    --normalize vectors
+    v_pl1 = v_pl1/math__norm(v_pl1)
+    v_pl2 = v_pl2/math__norm(v_pl2)
+
+    --get bisector of plane vectors
+    bisec = (v_pl1 + v_pl2)
+    bisec = bisec/math__norm(bisec)
+
+    -- get horizontal vector of the two planes
+    RETURN(bisec#int_lne.vec)
+
+  END shapes__plane_intersection_bicsector
+
+
+ROUTINE shapes__bisector_from_2planes
+  VAR
+    pl1, pl2 : t_PLANE
+    bisec : VECTOR
+  BEGIN
+    pl1 = shapes__create_plane_from_points(p1, p2, p3)
+    pl2 = shapes__create_plane_from_points(p4, p5, p6)
+    bisec = shapes__plane_intersection_bicsector(pl1, pl2)
+
+    RETURN(bisec)
+  END shapes__bisector_from_2planes
+
+ROUTINE shapes__bisector_from_2planes_euler
+  VAR
+    pl1, pl2 : t_PLANE
+    bisec : VECTOR
+  BEGIN
+    pl1 = shapes__create_plane_from_points(p1, p2, p3)
+    pl2 = shapes__create_plane_from_points(p4, p5, p6)
+    bisec = shapes__plane_intersection_bicsector(pl1, pl2)
+
+    RETURN(pose__vector_to_euler(bisec, 2) )
+  END shapes__bisector_from_2planes_euler
+
+
 ROUTINE shapes__project_point_on_plane
   BEGIN
     -- calculate distance from point to the plane

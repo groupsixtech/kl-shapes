@@ -24,5 +24,11 @@
   ],
   "tests-depends" : [
     "KUnit"
+  ],
+  "tp-interfaces" : [
+    {"routine" : "shapes__vector_from_2planes", "program_name" : "shp_splitedv"},
+    {"routine" : "shapes__euler_from_2planes", "program_name" : "shp_splitedg"},
+    {"routine" : "shapes__bisector_from_2planes", "program_name" : "shp_bisecv"},
+    {"routine" : "shapes__bisector_from_2planes_euler", "program_name" : "shp_bisece"}
   ]
 }

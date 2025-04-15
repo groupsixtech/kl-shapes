@@ -149,10 +149,61 @@ ROUTINE t_pnt2pln2 : BOOLEAN
     RETURN(b1 AND b2 AND b3 AND b4)
   END t_pnt2pln2
 
+
+ROUTINE t_plnint : BOOLEAN
+  VAR
+    setpnts1 : ARRAY[3] OF VECTOR
+    setpnts2 : ARRAY[3] OF VECTOR
+    pl1, pl2 : T_PLANE
+    actual_line, actual_line2 : t_LINE
+    expect_line, expect_line2 : t_LINE
+  BEGIN
+    --plane intersection vector
+    setpnts1[1] = VEC(3,0,0)
+    setpnts1[2] = VEC(0,1,0)
+    setpnts1[3] = VEC(0,0,1)
+
+    setpnts2[1] = VEC(-1,0,0)
+    setpnts2[2] = VEC(0,-3,0)
+    setpnts2[3] = VEC(0,0,1)
+
+    pl1 = shapes__create_plane_from_points(setpnts1[1], setpnts1[2], setpnts1[3])
+    pl2 = shapes__create_plane_from_points(setpnts2[1], setpnts2[2], setpnts2[3])
+    actual_line = shapes__plane_intersection_line(pl1, pl2)
+
+    expect_line.vec = VEC(12, -12, 8)
+    expect_line.point = VEC(-1.5, 1.5, 0)
+
+    --plane intersection vector
+    setpnts1[1] = VEC(-1,0,0)
+    setpnts1[2] = VEC(1,0,0)
+    setpnts1[3] = VEC(0,0,1)
+
+    setpnts2[1] = VEC(0,-1,0)
+    setpnts2[2] = VEC(0,1,0)
+    setpnts2[3] = VEC(0,0,1)
+
+    pl1 = shapes__create_plane_from_points(setpnts1[1], setpnts1[2], setpnts1[3])
+    pl2 = shapes__create_plane_from_points(setpnts2[1], setpnts2[2], setpnts2[3])
+    actual_line2 = shapes__plane_intersection_line(pl1, pl2)
+
+    expect_line2.vec = VEC(0,0,4)
+    expect_line2.point = VEC(0,0,0)
+
+    RETURN(kunit_eq_vrl(expect_line.vec, actual_line.vec, 0.05) AND
+           kunit_eq_vrl(expect_line.point, actual_line.point, 0.05) AND 
+           kunit_eq_vrl(expect_line2.vec, actual_line2.vec, 0.05) AND
+           kunit_eq_vrl(expect_line2.point, actual_line2.point, 0.05))
+
+  END t_plnint
+
+
 BEGIN
     -- total assersions 8
     kunit_test('test straight cylinder point collision', t_cyl_col) -- assersions 4 
     kunit_test('test point projection on plane', t_pnt2pln) -- assersions 4
+    kunit_test('test 3 pnt plane', t_pnt2pln2) -- assersions 12
+    kunit_test('test plane intersection', t_plnint) -- assersions 6
 
     kunit_done
 END test_shapes
