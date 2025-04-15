@@ -56,10 +56,8 @@ ROUTINE new
   END new
 
 ROUTINE clear
-  VAR
-    uninit_pos : XYZWPR
   BEGIN
-    this.origin = uninit_pos
+    this.origin = $MOR_GRP[1].$NILPOS
     SET_UNINIT_R('class_name', 'this.radius')
     SET_UNINIT_R('class_name', 'this.height')
 
