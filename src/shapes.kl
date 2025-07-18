@@ -83,7 +83,7 @@ ROUTINE shapes__euler_from_2planes
     pl2 = shapes__create_plane_from_points(p4, p5, p6)
     ln1 = shapes__plane_intersection_line(pl1, pl2)
 
-    RETURN( pose__vector_to_euler(ln1.vec, 1) )
+    RETURN( pose__vector_to_euler2(ln1.vec, 1) )
   END shapes__euler_from_2planes
 
 ROUTINE shapes__plane_intersection_bicsector
@@ -136,7 +136,7 @@ ROUTINE shapes__bisector_from_2planes_euler
     pl2 = shapes__create_plane_from_points(p4, p5, p6)
     bisec = shapes__plane_intersection_bicsector(pl1, pl2)
 
-    RETURN(pose__vector_to_euler(bisec, 2) )
+    RETURN(pose__vector_to_euler2(bisec, 2) )
   END shapes__bisector_from_2planes_euler
 
 
